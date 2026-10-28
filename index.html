@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>语言任务样本展示页｜何思韵 · 语音数据 / ASR 评测</title>
+<meta name="description" content="何思韵的语言任务作品集：ASR 训练数据构建、LLM Prompt 输出纠偏、自然语言意图解析、粤语 ASR 评测实战。">
+<style>
+:root{
+  --ink:#1a1a1a; --ink2:#444; --ink3:#767676;
+  --bg:#fbfbf9; --card:#fff; --line:#e6e4dc;
+  --accent:#0f6e56; --accent-soft:#eef6f2; --accent-line:#cfe4dc;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Arial Unicode MS","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  color:var(--ink); background:var(--bg); line-height:1.75; font-size:15px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:920px;margin:0 auto;padding:0 20px}
+
+/* 顶栏 */
+header{background:var(--card);border-bottom:1px solid var(--line);padding:34px 0 26px}
+.hero h1{font-size:30px;font-weight:600;letter-spacing:1px;margin-bottom:6px}
+.hero .sub{color:var(--accent);font-size:15px;font-weight:500;margin-bottom:14px}
+.hero .contacts{color:var(--ink2);font-size:13.5px;line-height:2}
+.hero .contacts span{margin-right:16px;display:inline-block}
+.btnrow{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+  display:inline-block;background:var(--accent);color:#fff;text-decoration:none;
+  font-size:13.5px;padding:8px 16px;border-radius:5px;
+}
+.btn.ghost{background:#fff;color:var(--accent);border:1px solid var(--accent-line)}
+
+/* 导航 */
+nav{
+  position:sticky;top:0;z-index:9;background:rgba(255,255,255,.94);
+  backdrop-filter:saturate(180%) blur(8px);
+  border-bottom:1px solid var(--line);
+}
+nav ul{max-width:920px;margin:0 auto;padding:0 20px;list-style:none;display:flex;gap:22px;overflow-x:auto}
+nav a{
+  display:block;padding:11px 0;color:var(--ink2);text-decoration:none;
+  font-size:13.5px;white-space:nowrap;border-bottom:2px solid transparent;
+}
+nav a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* 导语 */
+.lead{
+  background:var(--accent-soft);border-left:3px solid var(--accent);
+  padding:14px 18px;margin:26px 0 8px;border-radius:0 6px 6px 0;
+  color:#333;font-size:14.5px;line-height:1.85;
+}
+
+/* 模块卡片 */
+section{
+  background:var(--card);border:1px solid var(--line);border-radius:8px;
+  padding:26px 26px 22px;margin:22px 0;
+}
+section h2{
+  font-size:19px;font-weight:600;color:var(--accent);
+  padding-bottom:10px;margin-bottom:16px;border-bottom:1px solid var(--accent-line);
+  display:flex;align-items:center;gap:10px;
+}
+section h2 .no{
+  background:var(--accent);color:#fff;font-size:12px;font-weight:500;
+  padding:2px 9px;border-radius:4px;letter-spacing:.5px;
+}
+.meta-row{
+  font-size:13.5px;color:#555;background:#fafaf7;
+  padding:12px 14px;border-radius:6px;margin-bottom:18px;line-height:1.9;
+}
+.meta-row b{color:#333;font-weight:600}
+
+h3{font-size:14.5px;font-weight:600;margin:20px 0 8px;color:var(--ink)}
+
+.tw{overflow-x:auto;margin:10px 0 6px;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:620px}
+th{
+  background:var(--accent-soft);color:var(--accent);font-weight:600;text-align:left;
+  padding:9px 10px;border:1px solid var(--accent-line);white-space:nowrap;
+}
+td{padding:9px 10px;border:1px solid var(--line);vertical-align:top;color:#333;line-height:1.75}
+td.ipa{font-family:"Times New Roman",Times,serif;font-size:14px}
+
+ul.clean{list-style:none;margin:8px 0}
+ul.clean li{padding-left:14px;position:relative;margin-bottom:6px;font-size:14px;color:var(--ink2)}
+ul.clean li::before{
+  content:"";position:absolute;left:0;top:11px;width:5px;height:5px;
+  border-radius:50%;background:var(--accent);
+}
+.tag{
+  display:inline-block;background:var(--accent-soft);color:var(--accent);
+  font-size:12px;padding:1px 8px;border-radius:3px;margin-right:5px;
+}
+
+.finding{display:flex;gap:12px;margin-bottom:14px}
+.finding .n{
+  flex:0 0 24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
+  font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:3px;
+}
+.finding .t{font-weight:600;font-size:14.5px;margin-bottom:3px}
+.finding .d{font-size:13.5px;color:var(--ink2);line-height:1.8}
+.finding .d b{color:var(--ink);font-weight:600}
+
+.foot{font-size:13px;color:var(--ink3);border-top:1px solid var(--line);padding-top:10px;margin-top:16px;line-height:1.8}
+.small{font-size:13px;color:var(--ink3)}
+
+footer{padding:30px 0 50px;text-align:center;color:var(--ink3);font-size:13px}
+
+@media(max-width:640px){
+  .hero h1{font-size:24px}
+  section{padding:20px 16px 18px}
+  body{font-size:14.5px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hero">
+    <h1>何思韵</h1>
+    <div class="sub">语音数据标注 · ASR 评测 · 语言数据运营</div>
+    <div class="contacts">
+      <span>上海</span>
+      <span>汉语言文学本科（音韵学 / 现代汉语）</span>
+      <span>2 年 AI 内容与数据项目经验</span>
+    </div>
+    <div class="btnrow">
+      <a class="btn" href="何思韵_语言任务样本展示页_2026.pdf" download>下载 PDF 作品集（4 页）</a>
+      <a class="btn ghost" href="#m4">直接看 ASR 评测实战</a>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#m1">模块一 · ASR 训练数据构建</a></li>
+    <li><a href="#m2">模块二 · Prompt 输出纠偏</a></li>
+    <li><a href="#m3">模块三 · 意图解析标准化</a></li>
+    <li><a href="#m4">模块四 · ASR 评测实战</a></li>
+  </ul>
+</nav>
+
+<div class="wrap">
+
+  <div class="lead">
+    以下四个模块对应语音数据与语言模型训练中的典型任务，覆盖「<b>数据构建 → 标注 → 模型评估 → 偏差归因</b>」全链路。
+    所有数据来自本人参与的田野调查与真实项目，非虚构案例。
+  </div>
+
+  <!-- 模块一 -->
+  <section id="m1">
+    <h2><span class="no">模块一</span>ASR 训练数据构建与转写误差分析</h2>
+
+    <div class="meta-row">
+      <b>来源</b>：国家社科基金重大项目子课题（2022.07–2022.10 项目参与）+ 本科毕业论文延伸研究（2022.11–2023.04，个人整理）<br>
+      <b>任务</b>：将核心词汇转写为粤语写法、拼音及 IPA 注音，构建结构化语音样本集<br>
+      <b>规模</b>：3000+ 条词语的音频切分、转写与音素对齐　　<b>工具</b>：Praat、IPA 转写表、Whisper（抽样验证）
+    </div>
+
+    <h3>示例（节选）：人工转写与模型输出的逐条比对</h3>
+    <div class="tw">
+      <table>
+        <tr><th>音频编号</th><th>人工转写结果</th><th>Whisper 输出</th><th>差异点</th><th>语言注释</th></tr>
+        <tr>
+          <td>ASR_GDFS_001</td>
+          <td class="ipa">kʰeoi44 fan52 hel53 ok55</td>
+          <td class="ipa">kʰei25 kʰeoi44 fan52 tou44 ŋo23 ok55</td>
+          <td class="ipa">hel53→tou44<br>∅→ŋo23</td>
+          <td>口音偏差导致识别出错；鼻音导致增音</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>可迁移任务结构</h3>
+    <ul class="clean">
+      <li><span class="tag">语音合成</span>拼音–IPA 映射任务（语音合成基础训练）</li>
+      <li><span class="tag">音系</span>音变识别任务（音位差异分类训练）</li>
+      <li><span class="tag">ASR</span>输出纠偏任务（语音模型微调辅助样本）</li>
+      <li><span class="tag">多模态</span>多语种词汇对齐任务（词义 / 发音多模态建模）</li>
+    </ul>
+
+    <h3>能力体现</h3>
+    <ul class="clean">
+      <li>能把「人类语音的模糊表达」转化为可训练的语言标签，具备结构化能力</li>
+      <li>掌握基础音系知识、IPA 转写规范、粤语调值与音变模式</li>
+      <li>能基于语言学专业知识，构建适用于 ASR 系统的标注体系</li>
+    </ul>
+  </section>
+
+  <!-- 模块二 -->
+  <section id="m2">
+    <h2><span class="no">模块二</span>LLM Prompt 构建与输出纠偏</h2>
+
+    <div class="meta-row">
+      <b>任务类型</b>：Prompt 编写 + 输出校对 + 情绪 / 意图 / 风格标注<br>
+      <b>起点</b>：在使用大模型协助编辑时，观察到模型常无法保留原句的情绪质感与风格语调，输出「太工具化」或「太模糊」。于是反复调整输入结构、记录有效与无效的触发模式，逐步形成对模型语言偏差的识别感。
+    </div>
+
+    <div class="tw">
+      <table>
+        <tr>
+          <th>原始人类输入</th><th>Prompt 目标</th><th>初版输出</th>
+          <th>问题发现</th><th>纠偏后输出</th><th>情绪标签</th>
+        </tr>
+        <tr>
+          <td>我有时候觉得不是我不想说，是说的那个回路根本没打开。</td>
+          <td>用生理隐喻模拟「表达系统未激活」的内在体验</td>
+          <td>我有点不愿意表达，可能是不想面对问题。</td>
+          <td>用「回避」替代了「表达机制失效」；忽略回路隐喻；风格单调</td>
+          <td>像是有人偷偷把那个「开口的按钮」藏了起来，我一直在找，但没有反应。</td>
+          <td>沉默、冻结、轻微困惑<br><span class="small">风格：身体化语言 / 神经断路隐喻</span></td>
+        </tr>
+        <tr>
+          <td>我认为自己不能忍受他人用审视的方式看我，哪怕他们说的是好话。</td>
+          <td>表达「被称赞时的不适感」，强调被凝视的不自由，不使用否定式</td>
+          <td>我不喜欢别人夸我，这让我觉得很别扭。</td>
+          <td>情绪标签粗糙（「别扭」太轻）；未呈现「赞美即控制」；缺少文化 / 关系隐喻层</td>
+          <td>他们说我是个值得被喜欢的人，我笑着点头，但心里像被什么捏了一下。</td>
+          <td>羞耻、被凝视、控制下的顺从<br><span class="small">风格：隐性抵抗 / 多义性表达</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>能力体现</h3>
+    <ul class="clean">
+      <li>能构建 Prompt 指令、识别模型输出问题、完成校对与风格调整，同时完成语言结构标注</li>
+      <li>将 Prompt 编排与输出评估标准化，形成适用于「风格重建 / 语义纠偏 / 结构提炼」的语言调控能力</li>
+    </ul>
+
+    <div class="foot">这份能力的来源不是课程，而是长期使用中积累的「生成语言判断力」—— 从语言使用者转向语言建模参与者的关键一步。</div>
+  </section>
+
+  <!-- 模块三 -->
+  <section id="m3">
+    <h2><span class="no">模块三</span>语言结构标准化：自然语言意图解析</h2>
+
+    <div class="meta-row">
+      <b>来源</b>：广东省汇智项目管理有限公司｜招标部项目助理（2024.04–2025.10）<br>
+      <b>背景</b>：甲方常提供结构混乱、表达模糊的语言需求，我负责将其转化为逻辑清晰、语义一致的技术文档。该过程高度贴合语言模型训练中的「意图解析 + 格式重写」任务。
+    </div>
+
+    <div class="tw">
+      <table>
+        <tr><th>原始输入（自然语言）</th><th>人工拆解结果</th><th>标准化语言输出（技术文案）</th></tr>
+        <tr>
+          <td>「要一个信息管理系统，最好可以分析，后期可以再扩展……」</td>
+          <td><b>关键词提取</b>：信息管理系统、分析功能、可扩展性<br><br><b>隐含需求提炼</b>：权限控制、数据可视化、模块化结构</td>
+          <td>「建设一套具备用户信息管理、数据查询与统计分析功能的信息系统，支持模块化扩展，满足数据安全与权限控制要求。」</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>任务标签</h3>
+    <div class="meta-row">
+      <b>类型</b>：自然语言意图解析 → 格式化指令转写　｜　<b>技能点</b>：结构补全 / 语义补强 / 风格重写 / 需求泛化 / 情感标注<br>
+      <b>可用于</b>：LLM Prompt 样本设计、结构化输入构建、意图识别模型训练
+    </div>
+
+    <h3>工具协同流程</h3>
+    <ul class="clean">
+      <li>使用大模型协助初步摘要与格式重组</li>
+      <li>结合 WPS 统一格式与术语，输出规范文本</li>
+      <li>通过人工修订确保语义完整与执行可读性</li>
+    </ul>
+
+    <div class="foot">该模块展示的是「非结构语言 → 结构化建模语料」的转换能力，具备为语言模型提供真实任务样本的构建与审校经验。</div>
+  </section>
+
+  <!-- 模块四 -->
+  <section id="m4">
+    <h2><span class="no">模块四</span>ASR 评测实战：Whisper 在粤语字表朗读场景的适用性</h2>
+
+    <div class="meta-row">
+      <b>数据</b>：粤语田野调查录音《江曾摄》408 秒；《江摄》字表 54 条，其中 <b>41 条</b>成功采集读音，<b>13 条</b>因发音人无法引导而缺失（评测中整行剔除，避免虚增漏识）<br>
+      <b>系统</b>：Whisper small（faster-whisper 1.2.1，int8 量化，language=zh）<br>
+      <b>方法</b>：VAD 分段 → 逐段转写 → 与字表对齐 → 双口径 CER 计算 → 音系错误归因
+    </div>
+
+    <h3>三个发现</h3>
+
+    <div class="finding">
+      <div class="n">1</div>
+      <div class="c">
+        <div class="t">输出多样性塌缩</div>
+        <div class="d">41 条参考字涵盖 <b>20 种不同音节、10 类声母</b>（p / pʰ / ʦ / ʦʰ / s / k / h / m / t / ŋ）；模型在该区间输出的 58 个单元中，<b>43 个是同一个字「膀」</b>，去重后仅 6 种。本应呈现明显差异的音节序列，被压成单一字形。</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="n">2</div>
+      <div class="c">
+        <div class="t">同音字归并，导致字面 CER 系统性虚高</div>
+        <div class="d">字表「邦」→ 输出「帮」（bong1 / bong1）、「庞」→「旁」（pong4 / pong4）、「窗」→「枪」（coeng1 / coeng1）：<b>字面全错，音值全对</b>。方言调查按「音」列字，同一个音底下一组同音字，模型只保留一个字形，因此仅用汉字错误率会严重高估错误。</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="n">3</div>
+      <div class="c">
+        <div class="t">通用粤拼词表不适用于本方言点</div>
+        <div class="d">字表记「江 / 扛 / 豇」均为 <span class="ipa">kɔŋ 51</span>（见母读 k-），而标准粤拼为 <b>gong1</b>（g-）。以通用词典作判定基准，会把本来正确的判成错误 —— <b>评测基准必须使用田野采集的 IPA 记音</b>。</div>
+      </div>
+    </div>
+
+    <h3>方法建议：双口径 CER 框架</h3>
+    <div class="tw">
+      <table>
+        <tr><th>口径</th><th>计算方式</th><th>用途</th></tr>
+        <tr><td><b>字面 CER</b></td><td>严格按汉字比对（编辑距离 ÷ 参考字数）</td><td>与行业常规指标对齐</td></tr>
+        <tr><td><b>音值 CER</b></td><td>同音字判为正确，只计真音错</td><td>反映实际可用性</td></tr>
+      </table>
+    </div>
+    <p class="small">两个口径的差值 = 同音字归并造成的假错误比例。错误再按声母 / 韵母 / 声调 / 增字 / 漏识细分归因。</p>
+
+    <h3>局限（如实说明）</h3>
+    <ul class="clean">
+      <li>逐段对应关系尚未逐条人工复核，结论基于序列整体统计</li>
+      <li>样本为单一方言点、单一发音人，不可外推至粤语整体</li>
+      <li>未做参数对比实验（model size、language=zh / yue）</li>
+    </ul>
+
+    <div class="foot">该模块的核心价值：识别出「字面错、音值对」这一只有语言学背景才能发现的评测陷阱，并据此提出双口径评测方案。</div>
+  </section>
+
+  <footer>
+    何思韵 · 语言任务样本展示页 · 2026<br>
+    <span class="small">所有数据来自本人参与的田野调查与真实项目</span>
+  </footer>
+
+</div>
+</body>
+</html>
